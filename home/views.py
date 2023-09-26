@@ -70,6 +70,16 @@ class ArticleUpdateView(APIView):
         return Response(data=article_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
+# class ArticleUpdateView(APIView):
+#     def put(self, request: Request, post_id):
+#         article = Article.objects.get(id=post_id)
+#         article_serializer = ArticleSerializer(data=request.data, partial=True)
+#         if article_serializer.is_valid():
+#             article_serializer.update(instance=article, validated_data=article_serializer.validated_data)
+#             return Response(data=article_serializer.data, status=status.HTTP_202_ACCEPTED)
+#         return Response(data=article_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
 class ArticleDeleteView(APIView):
     def delete(self, request: Request, post_id):
         article = Article.objects.get(id=post_id)
