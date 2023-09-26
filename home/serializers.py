@@ -10,6 +10,8 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class ArticleSerializer(serializers.ModelSerializer):
+    status = serializers.BooleanField(write_only=True)
+
     class Meta:
         model = Article
         fields = "__all__"
