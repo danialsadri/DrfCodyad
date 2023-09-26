@@ -2,7 +2,8 @@ from django.contrib.auth.models import User
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.request import Request
-from .serializers import UserSerializer
+from .models import Article
+from .serializers import UserSerializer, ArticleSerializer
 import requests
 
 
@@ -33,3 +34,17 @@ class UserListView(APIView):
         users = User.objects.all()
         user_serializer = UserSerializer(instance=users, many=True)
         return Response(data=user_serializer.data)
+
+
+class ArticleListView(APIView):
+    def get(self, request: Request):
+        articles = Article.objects.all()
+        article_serializer = ArticleSerializer(instance=articles, many=True)
+        return Response(data=article_serializer.data)
+
+
+class ArticleDetailView(APIView):
+    def get(self, request: Request, post_id):
+        article = Article.objects.get(id=post_id)
+        article_serializer = ArticleSerializer(instance=article)
+        return Response(data=article_serializer.data)
