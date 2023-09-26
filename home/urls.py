@@ -12,4 +12,5 @@ urlpatterns = [
     path('article/update/<int:post_id>/', views.ArticleUpdateView.as_view()),
     path('article/delete/<int:post_id>/', views.ArticleDeleteView.as_view()),
     path('article/delete/<int:post_id>/', views.ArticleDeleteView.as_view()),
+    path('article/delete/<int:post_id>/', views.ArticleDeleteView.as_view()),
 ]
