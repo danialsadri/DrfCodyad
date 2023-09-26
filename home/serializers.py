@@ -17,9 +17,14 @@ class UserSerializer(serializers.ModelSerializer):
 #     if value['title'] == 'hello world':
 #         raise serializers.ValidationError('tite can not be hello world')
 
-def check_title(value):
-    if value['title'] == 'hello world':
-        raise serializers.ValidationError({'title': 'tite can not be hello world'})
+# def check_title(value):
+#     if value['title'] == 'hello world':
+#         raise serializers.ValidationError({'title': 'tite can not be hello world'})
+
+class CheckTitle:
+    def __call__(self, value):
+        if value['title'] == 'hello world':
+            raise serializers.ValidationError({'title': 'tite can not be hello world'})
 
 
 class ArticleSerializer(serializers.ModelSerializer):
@@ -28,7 +33,8 @@ class ArticleSerializer(serializers.ModelSerializer):
     class Meta:
         model = Article
         fields = "__all__"
-        validators = [check_title]
+        # validators = [check_title]
+        validators = [CheckTitle()]
         # extra_kwargs = {
         #     'title': {'validators': [check_title]},
         # }
