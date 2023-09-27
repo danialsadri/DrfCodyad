@@ -1,6 +1,6 @@
 from django.contrib.auth.models import User
 from rest_framework import serializers
-from .models import Article
+from .models import Article, Comment
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -53,3 +53,9 @@ class ArticleSerializer(serializers.ModelSerializer):
         request = self.context.get('request')
         validated_data['user'] = request.user
         return Article.objects.create(**validated_data)
+
+
+class CommentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Comment
+        fields = "__all__"

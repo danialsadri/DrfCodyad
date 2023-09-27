@@ -4,7 +4,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.request import Request
 from .models import Article
-from .serializers import UserSerializer, ArticleSerializer
+from .serializers import UserSerializer, ArticleSerializer, CommentSerializer
 from .permissions import BlockListPermission, IsUserOrReadOnly
 import requests
 
@@ -96,3 +96,10 @@ class ArticleDeleteView(APIView):
         self.check_object_permissions(request, article)
         article.delete()
         return Response(data=None, status=status.HTTP_204_NO_CONTENT)
+
+
+class ArticleCommentsView(APIView):
+    def get(self, request: Request, article_id):
+        comments = Article.objects.get(id=article_id).comments.all()
+        comment_serializer = CommentSerializer(instance=comments, many=True)
+        return Response(data=comment_serializer.data, status=status.HTTP_200_OK)
