@@ -1,4 +1,5 @@
 from django.contrib.auth.models import User
+from django.utils.timezone import now
 from rest_framework import serializers
 from .models import Article, Comment
 
@@ -56,6 +57,11 @@ class ArticleSerializer(serializers.ModelSerializer):
 
 
 class CommentSerializer(serializers.ModelSerializer):
+    days_ago = serializers.SerializerMethodField()
+
     class Meta:
         model = Comment
-        fields = "__all__"
+        fields = ['id', 'article', 'description', 'created', 'days_ago']
+
+    def get_days_ago(self, obj):
+        return (now().date() - obj.created).days
