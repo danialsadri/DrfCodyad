@@ -18,3 +18,12 @@ class BlockUser(models.Model):
 
     def __str__(self):
         return self.username
+
+
+class Comment(models.Model):
+    article = models.ForeignKey(Article, on_delete=models.CASCADE, related_name='comments')
+    description = models.TextField(max_length=500)
+    created = models.DateField()
+
+    def __str__(self):
+        return self.description[:20]
