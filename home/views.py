@@ -5,6 +5,7 @@ from rest_framework.response import Response
 from rest_framework.request import Request
 from .models import Article
 from .serializers import UserSerializer, ArticleSerializer
+from .permissions import BlockListPermission
 import requests
 
 
@@ -38,6 +39,8 @@ class UserListView(APIView):
 
 
 class ArticleListView(APIView):
+    permission_classes = [BlockListPermission]
+
     def get(self, request: Request):
         articles = Article.objects.all()
         article_serializer = ArticleSerializer(instance=articles, many=True)
