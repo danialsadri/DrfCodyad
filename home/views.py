@@ -53,8 +53,10 @@ class ArticleDetailView(APIView):
 
 class ArticleCreateView(APIView):
     def post(self, request: Request):
-        article_serializer = ArticleSerializer(data=request.data)
+        article_serializer = ArticleSerializer(data=request.data, context={'request': request})
         if article_serializer.is_valid():
+            # if request.user.is_authenticated:
+            #     article_serializer.validated_data['user'] = request.user
             article_serializer.save()
             return Response(data=article_serializer.data, status=status.HTTP_201_CREATED)
         return Response(data=article_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
