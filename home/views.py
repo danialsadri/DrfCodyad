@@ -5,7 +5,7 @@ from rest_framework.response import Response
 from rest_framework.request import Request
 from .models import Article
 from .serializers import UserSerializer, ArticleSerializer
-from .permissions import BlockListPermission
+from .permissions import BlockListPermission, IsUserOrReadOnly
 import requests
 
 
@@ -66,8 +66,11 @@ class ArticleCreateView(APIView):
 
 
 class ArticleUpdateView(APIView):
+    permission_classes = [IsUserOrReadOnly]
+
     def put(self, request: Request, post_id):
         article = Article.objects.get(id=post_id)
+        self.check_object_permissions(request, article)
         article_serializer = ArticleSerializer(instance=article, data=request.data, partial=True)
         if article_serializer.is_valid():
             article_serializer.save()
@@ -86,7 +89,10 @@ class ArticleUpdateView(APIView):
 
 
 class ArticleDeleteView(APIView):
+    permission_classes = [IsUserOrReadOnly]
+
     def delete(self, request: Request, post_id):
         article = Article.objects.get(id=post_id)
+        self.check_object_permissions(request, article)
         article.delete()
         return Response(data=None, status=status.HTTP_204_NO_CONTENT)
