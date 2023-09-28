@@ -3,7 +3,7 @@ from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.request import Request
-from rest_framework.viewsets import ViewSet
+from rest_framework.viewsets import ViewSet, ModelViewSet
 from .models import Article
 from .serializers import UserSerializer, ArticleSerializer, CommentSerializer
 from .permissions import BlockListPermission, IsUserOrReadOnly
@@ -45,7 +45,7 @@ class ArticleListView(APIView):
 
     def get(self, request: Request):
         articles = Article.objects.all()
-        article_serializer = ArticleSerializer(instance=articles, many=True)
+        article_serializer = ArticleSerializer(instance=articles, many=True, context={'request': request})
         return Response(data=article_serializer.data, status=status.HTTP_200_OK)
 
 
@@ -145,3 +145,8 @@ class ArticleViewSet(ViewSet):
         queryset = get_object_or_404(Article, id=pk)
         queryset.delete()
         return Response(data=None, status=status.HTTP_204_NO_CONTENT)
+
+
+class ArticleModelViewSet(ModelViewSet):
+    queryset = Article.objects.all()
+    serializer_class = ArticleSerializer

@@ -44,6 +44,7 @@ class ArticleSerializer(serializers.ModelSerializer):
     # comments = serializers.SerializerMethodField()
     user = serializers.SlugRelatedField(read_only=True, slug_field='email')
     comments = CommentSerializer(many=True, read_only=True)
+    image = serializers.SerializerMethodField()
 
     class Meta:
         model = Article
@@ -72,6 +73,13 @@ class ArticleSerializer(serializers.ModelSerializer):
     # def get_comments(self, obj):
     #     comment_serializer = CommentSerializer(instance=obj.comments.all(), many=True).data
     #     return comment_serializer
+
+    def get_image(self, obj):
+        if obj.image:
+            request = self.context.get('request')
+            return request.build_absolute_uri(obj.image.url)
+        else:
+            return None
 
 
 class UserSerializer(serializers.ModelSerializer):
