@@ -2,6 +2,7 @@ from django.contrib.auth.models import User
 from django.utils.timezone import now
 from rest_framework import serializers
 from .models import Article, Comment
+from persiantools.jdatetime import JalaliDate
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -58,6 +59,7 @@ class ArticleSerializer(serializers.ModelSerializer):
 
 class CommentSerializer(serializers.ModelSerializer):
     days_ago = serializers.SerializerMethodField()
+    created = serializers.SerializerMethodField()
 
     class Meta:
         model = Comment
@@ -65,3 +67,7 @@ class CommentSerializer(serializers.ModelSerializer):
 
     def get_days_ago(self, obj):
         return (now().date() - obj.created).days
+
+    def get_created(self, obj):
+        date = JalaliDate(obj.created, locale='fa')
+        return date.strftime("%c")
