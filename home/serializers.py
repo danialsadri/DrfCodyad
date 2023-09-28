@@ -74,5 +74,5 @@ class ArticleSerializer(serializers.ModelSerializer):
         return Article.objects.create(**validated_data)
 
     def get_comments(self, obj):
-        article_serializer = CommentSerializer(instance=obj.comments.all(), many=True).data
-        return article_serializer
+        comment_serializer = CommentSerializer(instance=obj.comments.all(), many=True).data
+        return comment_serializer
