@@ -4,7 +4,8 @@ from . import views
 
 app_name = 'home'
 router = routers.SimpleRouter()
-router.register('', views.ArticleViewSet, 'article')
+router.register('viewset', views.ArticleViewSet, 'article_viewset')
+router.register('modelviewset', views.ArticleModelViewSet, 'article_modelviewset')
 urlpatterns = [
     path('message/', views.MessageView.as_view()),
     path('get_crypto/', views.GetCryptoPrice.as_view()),
