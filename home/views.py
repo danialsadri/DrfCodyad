@@ -9,6 +9,7 @@ from .serializers import UserSerializer, ArticleSerializer, CommentSerializer
 from .permissions import BlockListPermission, IsUserOrReadOnly
 import requests
 from django.shortcuts import get_object_or_404
+from rest_framework.pagination import PageNumberPagination, LimitOffsetPagination
 
 
 class MessageView(APIView):
@@ -45,7 +46,11 @@ class ArticleListView(APIView):
 
     def get(self, request: Request):
         articles = Article.objects.all()
-        article_serializer = ArticleSerializer(instance=articles, many=True, context={'request': request})
+        # Start Pagination
+        paginator = PageNumberPagination()
+        result = paginator.paginate_queryset(articles, request)
+        # End Pagination
+        article_serializer = ArticleSerializer(instance=result, many=True, context={'request': request})
         return Response(data=article_serializer.data, status=status.HTTP_200_OK)
 
 
