@@ -11,6 +11,22 @@ class UserSerializer(serializers.ModelSerializer):
         fields = ['username', 'email', 'first_name', 'last_name']
 
 
+class CommentSerializer(serializers.ModelSerializer):
+    days_ago = serializers.SerializerMethodField()
+    created = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Comment
+        fields = ['id', 'article', 'description', 'created', 'days_ago']
+
+    def get_days_ago(self, obj):
+        return (now().date() - obj.created).days
+
+    def get_created(self, obj):
+        date = JalaliDate(obj.created, locale='fa')
+        return date.strftime("%c")
+
+
 # def check_title(value):
 #     if value == 'hello world':
 #         raise serializers.ValidationError('tite can not be hello world')
@@ -31,6 +47,7 @@ class CheckTitle:
 
 class ArticleSerializer(serializers.ModelSerializer):
     status = serializers.BooleanField(write_only=True)
+    comments = serializers.SerializerMethodField()
 
     class Meta:
         model = Article
@@ -56,18 +73,6 @@ class ArticleSerializer(serializers.ModelSerializer):
         validated_data['user'] = request.user
         return Article.objects.create(**validated_data)
 
-
-class CommentSerializer(serializers.ModelSerializer):
-    days_ago = serializers.SerializerMethodField()
-    created = serializers.SerializerMethodField()
-
-    class Meta:
-        model = Comment
-        fields = ['id', 'article', 'description', 'created', 'days_ago']
-
-    def get_days_ago(self, obj):
-        return (now().date() - obj.created).days
-
-    def get_created(self, obj):
-        date = JalaliDate(obj.created, locale='fa')
-        return date.strftime("%c")
+    def get_comments(self, obj):
+        article_serializer = CommentSerializer(instance=obj.comments.all(), many=True).data
+        return article_serializer
