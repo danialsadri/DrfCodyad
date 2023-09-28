@@ -47,7 +47,9 @@ class CheckTitle:
 
 class ArticleSerializer(serializers.ModelSerializer):
     status = serializers.BooleanField(write_only=True)
-    comments = serializers.SerializerMethodField()
+    # comments = serializers.SerializerMethodField()
+    user = serializers.SlugRelatedField(read_only=True, slug_field='email')
+    comments = CommentSerializer(many=True, read_only=True)
 
     class Meta:
         model = Article
@@ -73,6 +75,6 @@ class ArticleSerializer(serializers.ModelSerializer):
         validated_data['user'] = request.user
         return Article.objects.create(**validated_data)
 
-    def get_comments(self, obj):
-        comment_serializer = CommentSerializer(instance=obj.comments.all(), many=True).data
-        return comment_serializer
+    # def get_comments(self, obj):
+    #     comment_serializer = CommentSerializer(instance=obj.comments.all(), many=True).data
+    #     return comment_serializer
