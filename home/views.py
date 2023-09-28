@@ -45,7 +45,7 @@ class ArticleListView(APIView):
 
     def get(self, request: Request):
         articles = Article.objects.all()
-        article_serializer = ArticleSerializer(instance=articles, many=True)
+        article_serializer = ArticleSerializer(instance=articles, many=True, context={'request': request})
         return Response(data=article_serializer.data, status=status.HTTP_200_OK)
 
 
