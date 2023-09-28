@@ -5,12 +5,6 @@ from .models import Article, Comment
 from persiantools.jdatetime import JalaliDate
 
 
-class UserSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = User
-        fields = ['username', 'email', 'first_name', 'last_name']
-
-
 class CommentSerializer(serializers.ModelSerializer):
     days_ago = serializers.SerializerMethodField()
     created = serializers.SerializerMethodField()
@@ -78,3 +72,18 @@ class ArticleSerializer(serializers.ModelSerializer):
     # def get_comments(self, obj):
     #     comment_serializer = CommentSerializer(instance=obj.comments.all(), many=True).data
     #     return comment_serializer
+
+
+class UserSerializer(serializers.ModelSerializer):
+    # articles = serializers.SerializerMethodField()
+    articles = ArticleSerializer(read_only=True, many=True)
+    # articles = serializers.PrimaryKeyRelatedField(read_only=True, many=True)
+    # articles = serializers.SlugRelatedField(read_only=True, many=True, slug_field='title')
+
+    class Meta:
+        model = User
+        fields = ['username', 'email', 'first_name', 'last_name', 'articles']
+
+    # def get_articles(self, obj):
+    #     article_serializer = ArticleSerializer(instance=obj.articles.all(), many=True).data
+    #     return article_serializer
