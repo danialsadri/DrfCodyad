@@ -1,7 +1,10 @@
-from django.urls import path
+from django.urls import path, include
+from rest_framework import routers
 from . import views
 
 app_name = 'home'
+router = routers.SimpleRouter()
+router.register('', views.ArticleViewSet, 'article')
 urlpatterns = [
     path('message/', views.MessageView.as_view()),
     path('get_crypto/', views.GetCryptoPrice.as_view()),
@@ -12,4 +15,5 @@ urlpatterns = [
     path('article/update/<int:post_id>/', views.ArticleUpdateView.as_view()),
     path('article/delete/<int:post_id>/', views.ArticleDeleteView.as_view()),
     path('article/comments/<int:article_id>/', views.ArticleCommentsView.as_view()),
+    path('article/', include(router.urls)),
 ]

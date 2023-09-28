@@ -3,10 +3,12 @@ from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.request import Request
+from rest_framework.viewsets import ViewSet
 from .models import Article
 from .serializers import UserSerializer, ArticleSerializer, CommentSerializer
 from .permissions import BlockListPermission, IsUserOrReadOnly
 import requests
+from django.shortcuts import get_object_or_404
 
 
 class MessageView(APIView):
@@ -103,3 +105,43 @@ class ArticleCommentsView(APIView):
         comments = Article.objects.get(id=article_id).comments.all()
         comment_serializer = CommentSerializer(instance=comments, many=True)
         return Response(data=comment_serializer.data, status=status.HTTP_200_OK)
+
+
+class ArticleViewSet(ViewSet):
+    def list(self, request: Request):
+        queryset = Article.objects.all()
+        serializer = ArticleSerializer(instance=queryset, many=True)
+        return Response(data=serializer.data, status=status.HTTP_200_OK)
+
+    def create(self, request: Request):
+        serializer = ArticleSerializer(data=request.data, context={'request': request})
+        if serializer.is_valid():
+            serializer.save()
+            return Response(data=serializer.data, status=status.HTTP_201_CREATED)
+        return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def retrieve(self, request: Request, pk=None):
+        queryset = get_object_or_404(Article, id=pk)
+        serializer = ArticleSerializer(instance=queryset)
+        return Response(data=serializer.data, status=status.HTTP_200_OK)
+
+    def update(self, request: Request, pk=None):
+        queryset = get_object_or_404(Article, id=pk)
+        serializer = ArticleSerializer(instance=queryset, data=request.data, context={'request': request})
+        if serializer.is_valid():
+            serializer.save()
+            return Response(data=serializer.data, status=status.HTTP_202_ACCEPTED)
+        return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def partial_update(self, request: Request, pk=None):
+        queryset = get_object_or_404(Article, id=pk)
+        serializer = ArticleSerializer(instance=queryset, data=request.data, partial=True, context={'request': request})
+        if serializer.is_valid():
+            serializer.save()
+            return Response(data=serializer.data, status=status.HTTP_202_ACCEPTED)
+        return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def destroy(self, request: Request, pk=None):
+        queryset = get_object_or_404(Article, id=pk)
+        queryset.delete()
+        return Response(data=None, status=status.HTTP_204_NO_CONTENT)
